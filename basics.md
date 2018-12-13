@@ -1,33 +1,44 @@
-mkdir ~/chef
-cd ~/chef
 
-- Download the docker compose file:
--- macOS
+Chef Basics
+===========
+
+### Prepare the environment
+
+mkdir ~/chef ; cd ~/chef
+
+### Download the docker compose file:
+
+**macOS:**
 curl -o docker-compose.yml https://raw.githubusercontent.com/learn-chef/chef/master/docker-compose.yml
--- Windows (PowerShell)
+
+**Windows (PowerShell):**
 Invoke-WebRequest -useb -o docker-compose.yml https://raw.githubusercontent.com/learn-chef/chef/master/docker-compose.yml
 
-- Retrieve the latest Chef workstation images
+### Retrieve the latest Chef workstation images
 docker-compose pull
 
-- Start the containers
+## Run the payload
+
+### Start the containers
 docker-compose up -d
 
-- Stop the containers
+### Stop the containers
 docker-compose down --rmi all
 
-- Connect to the workstation container
+### Connect to the workstation container
 docker exec -it workstation bash
 
-- Use the file resource to create a Hello World file
+### Use the file resource to create a Hello World file
 chef-run web1 file hello.txt content='Hello World!'
+
+### Check the contents of the file
 ssh web1 cat /hello.txt
 
-- ...and remove it
+### ...and remove it
 chef-run web1 file hello.txt action=delete
 
-- Basic recipe.rb:
----
+###  basic recipe.rb contents:
+```
 apt_update
 package 'figlet'
 directory '/tmp'
@@ -35,10 +46,10 @@ execute 'write_hello_world' do
     command 'figlet Hello World! > /tmp/hello.txt'
     not_if { File.exist?('/tmp/hello.txt') }
 end
----
+```
 
-- Folder structure:
-
+### Folder structure:
+```
 tree webserver
 webserver/
 |-- README.md
@@ -47,11 +58,14 @@ webserver/
 |   `-- default.rb
 `-- templates
     `-- index.html.erb
-    
+```
+
+### File types
 metadata.rb - version control & metadata.
 default.rb - default recipe to run if no other recipe is specified.
 
-- Basic recipe 2:
+### Basic recipe 2:
+```
 #
 # Cookbook:: webserver
 # Recipe:: default
@@ -69,9 +83,9 @@ end
 service 'apache2' do
   action [:enable, :start]
 end
-
-- Template example:
-
+```
+### Template example:
+```
 cat webserver/templates/index.html.erb
 <html>
   <head>
@@ -82,4 +96,4 @@ cat webserver/templates/index.html.erb
     <p>This is < % =node['hostname']% ></p>
   </body>
 </html>
-
+```
